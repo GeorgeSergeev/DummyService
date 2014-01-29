@@ -4,19 +4,18 @@ import java.io.Serializable;
 
 public class MuleMessage implements Serializable{
 	
-	private static final long serialVersionUID = -3006285502800893320L;
+	private String userId;
+	private String password;
+	private String organizationIRMS;
+	private String messageData;
 	
-	String userId;
-	String password;
-	String organizationIRMS;
-	String messageData;
+	private static final long serialVersionUID = -3006285502800893320L;
 	
 	public MuleMessage() {
 		super();
 	}
 	
-	public MuleMessage(String userId, String password, String organizationIRMS,
-			String messageData) {
+	public MuleMessage(String userId, String password, String organizationIRMS, String messageData) {
 		super();
 		this.userId = userId;
 		this.password = password;
@@ -34,6 +33,7 @@ public class MuleMessage implements Serializable{
 	public String getUserId() {
 		return userId;
 	}
+	
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
@@ -41,6 +41,7 @@ public class MuleMessage implements Serializable{
 	public String getPassword() {
 		return password;
 	}
+	
 	public void setPassword(String password) {
 		this.password = password;
 	}
@@ -48,6 +49,7 @@ public class MuleMessage implements Serializable{
 	public String getOrganizationIRMS() {
 		return organizationIRMS;
 	}
+	
 	public void setOrganizationIRMS(String organizationIRMS) {
 		this.organizationIRMS = organizationIRMS;
 	}
@@ -55,6 +57,7 @@ public class MuleMessage implements Serializable{
 	public String getMessageData() {
 		return messageData;
 	}
+
 	public void setMessageData(String messageData) {
 		this.messageData = messageData;
 	}	

@@ -4,13 +4,13 @@ import java.io.Serializable;
 
 
 
-public class IncomingMessage implements Serializable{
-
-	private static final long serialVersionUID = 7532995546058677684L;
+public class IncomingMessage implements Serializable{	
 	
-	int statusCode;
-	String messageBody;
-	MessageType messageType;
+	private int statusCode;
+	private String messageBody;
+	private MessageType messageType;
+	
+	private static final long serialVersionUID = 7532995546058677684L;
 	
 	public IncomingMessage() {
 		super();
@@ -32,6 +32,7 @@ public class IncomingMessage implements Serializable{
 	public int getStatusCode() {
 		return statusCode;
 	}
+	
 	public void setStatusCode(int i) {
 		this.statusCode = i;
 	}
@@ -39,6 +40,7 @@ public class IncomingMessage implements Serializable{
 	public String getMessageBody() {
 		return messageBody;
 	}
+	
 	public void setMessageBody(String messageBody) {
 		this.messageBody = messageBody;
 	}
@@ -46,6 +48,7 @@ public class IncomingMessage implements Serializable{
 	public MessageType getMessageType() {
 		return messageType;
 	}
+	
 	public void setMessageType(MessageType messageType) {
 		this.messageType = messageType;
 	}

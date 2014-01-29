@@ -2,15 +2,10 @@ package com.healthtech.hhi.service;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
@@ -26,40 +21,43 @@ import com.healthtech.hhi.entity.MuleMessage;
 @Service
 public class DummyServiceImpl implements DummyService {
 	
+	private IncomingMessage incomingMessage;
+	private PipeParser pipeParser = new PipeParser();
+	private Message message;
+	
 	private static final Logger logger = LoggerFactory.getLogger(DummyServiceImpl.class);
 	
 	public DummyServiceImpl() {
 		super();
 	}
 	
-	IncomingMessage incomingMessage;
-	PipeParser pipeParser = new PipeParser();
-	Message message;
-
-	// This method transforms an incoming JSON into an object (IncomingMessage class) :
+	
+	//	This method transforms an incoming JSON into an object (IncomingMessage class)
+	//	and sets STATUS CODE for response:
 
 	@Override
-	public ModelAndView getJsonAsString(String jsonString, HttpServletResponse response) {
+	public int convertJsonToIncomingMessage(String jsonString) {
+		ObjectMapper objectMapper = new ObjectMapper();	
 		try {
-			ObjectMapper objectMapper = new ObjectMapper();
-			incomingMessage = objectMapper.readValue(jsonString, IncomingMessage.class);
-			response.setStatus(incomingMessage.getStatusCode());
-			logger.info(incomingMessage.toString());
+			incomingMessage = objectMapper.readValue(jsonString, IncomingMessage.class);			
 		} catch (IOException e) {
-			throw new IllegalArgumentException("JSON parsing attempt failed ", e);
+			e.printStackTrace();
 		}
-		return null;
+		logger.info(incomingMessage.toString());
+		return incomingMessage.getStatusCode();
 	}
 	
 	
 	@Override
-	public @ResponseBody String getMuleResponse(HttpServletRequest request){
+	public String getMuleResponse(String putUserIdToService, String putPasswordToService, 
+												String putOrganizationIRMSToService, String putMessageDataToService){
 		MuleMessage muleMessage = new MuleMessage();
-		muleMessage.setUserId(request.getParameter("userId"));
-		muleMessage.setPassword(request.getParameter("password"));
-		muleMessage.setOrganizationIRMS(request.getParameter("organizationIRMS"));
-		muleMessage.setMessageData(request.getParameter("messageData"));
+		muleMessage.setUserId(putUserIdToService);
+		muleMessage.setPassword(putPasswordToService);
+		muleMessage.setOrganizationIRMS(putOrganizationIRMSToService);
+		muleMessage.setMessageData(putMessageDataToService);
 		
+		//	REMOVE:
 		logger.info("UserId : " + muleMessage.getUserId());
 		logger.info("Password : " + muleMessage.getPassword());
 		logger.info("OrganizationIRMS : " + muleMessage.getOrganizationIRMS());
@@ -75,7 +73,7 @@ public class DummyServiceImpl implements DummyService {
 			
 		} else if (incomingMessage.getMessageType() == MessageType.EXTENDED) {				//	returns case TEXT + case MIRROR
 			logger.info("Case : EXTENDED");
-			return ( getTextReply(muleMessage) + "\n" + "\n" + getMirrorReply(muleMessage) );
+			return (getTextReply(muleMessage) + "\n" + "\n" + getMirrorReply(muleMessage));
 		}
 		return null;
 	}
