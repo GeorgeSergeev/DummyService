@@ -9,9 +9,7 @@ import org.springframework.stereotype.Service;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.parser.DefaultXMLParser;
 import ca.uhn.hl7v2.parser.PipeParser;
-import ca.uhn.hl7v2.parser.XMLParser;
 import ca.uhn.hl7v2.util.Terser;
 
 import com.healthtech.hhi.entity.IncomingMessage;
@@ -37,9 +35,10 @@ public class DummyServiceImpl implements DummyService {
 
 	@Override
 	public int convertJsonToIncomingMessage(String jsonString) {
+		logger.info("	jsonString is " + jsonString);
 		ObjectMapper objectMapper = new ObjectMapper();	
 		try {
-			incomingMessage = objectMapper.readValue(jsonString, IncomingMessage.class);			
+			incomingMessage = objectMapper.readValue(jsonString, IncomingMessage.class);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -49,38 +48,35 @@ public class DummyServiceImpl implements DummyService {
 	
 	
 	@Override
-	public String getMuleResponse(String putUserIdToService, String putPasswordToService, 
-												String putOrganizationIRMSToService, String putMessageDataToService){
+	public String getMuleResponse(String putUserIdToService, String putPasswordToService, String putMessageDataToService){
 		MuleMessage muleMessage = new MuleMessage();
 		muleMessage.setUserId(putUserIdToService);
 		muleMessage.setPassword(putPasswordToService);
-		muleMessage.setOrganizationIRMS(putOrganizationIRMSToService);
 		muleMessage.setMessageData(putMessageDataToService);
 		
 		//	REMOVE:
 		logger.info("UserId : " + muleMessage.getUserId());
 		logger.info("Password : " + muleMessage.getPassword());
-		logger.info("OrganizationIRMS : " + muleMessage.getOrganizationIRMS());
 		logger.info("MessageData : " + muleMessage.getMessageData());
 		
 		if (incomingMessage.getMessageType() == MessageType.TEXT) {							//	returns specific text reply
 			logger.info("Case : TEXT");
 			return getTextReply(muleMessage);
-			
+
 		} else if (incomingMessage.getMessageType() == MessageType.MIRROR) {				//	returns .xml reply
 			logger.info("Case : MIRROR");
-			return getMirrorReply(muleMessage);
+			return getMirrorReply();
 			
 		} else if (incomingMessage.getMessageType() == MessageType.EXTENDED) {				//	returns case TEXT + case MIRROR
 			logger.info("Case : EXTENDED");
-			return (getTextReply(muleMessage) + "\n" + "\n" + getMirrorReply(muleMessage));
+			return (getTextReply(muleMessage) + "\n" + "\n" + getMirrorReply());
 		}
 		return null;
 	}
 	
 	private String getTextReply(MuleMessage muleMessage){
 		StringBuffer stringBuffer= new StringBuffer();
-		try {
+		try {			
 			message = pipeParser.parse(muleMessage.getMessageData());
 			Terser terser = new Terser(message);
 			logger.info( terser.get("MSH-4") + "|" + terser.get("MSH-5") );
@@ -94,17 +90,8 @@ public class DummyServiceImpl implements DummyService {
 		return stringBuffer.toString();
 	}
 	
-	private String getMirrorReply(MuleMessage muleMessage){
-		String hl7MessageToXML = null;
-		try {
-			message = pipeParser.parse(muleMessage.getMessageData());
-			XMLParser xmlParser = new DefaultXMLParser();
-	        hl7MessageToXML = xmlParser.encode(message);
-		} catch (HL7Exception e) {
-			e.printStackTrace();
-		}        
-        System.out.println(hl7MessageToXML);	            
-        return hl7MessageToXML;
+	private String getMirrorReply(){
+		return incomingMessage.getMessageBody();
 	}
 
 }

@@ -6,7 +6,6 @@ public class MuleMessage implements Serializable{
 	
 	private String userId;
 	private String password;
-	private String organizationIRMS;
 	private String messageData;
 	
 	private static final long serialVersionUID = -3006285502800893320L;
@@ -15,19 +14,17 @@ public class MuleMessage implements Serializable{
 		super();
 	}
 	
-	public MuleMessage(String userId, String password, String organizationIRMS, String messageData) {
+	public MuleMessage(String userId, String password, String messageData) {
 		super();
 		this.userId = userId;
 		this.password = password;
-		this.organizationIRMS = organizationIRMS;
 		this.messageData = messageData;
 	}	
 
 	@Override
 	public String toString() {
 		return "MuleMessage [userId=" + userId + ", password=" + password
-				+ ", organizationIRMS=" + organizationIRMS + ", messageData="
-				+ messageData + "]";
+				+ ", messageData=" + messageData + "]";
 	}
 
 	public String getUserId() {
@@ -44,14 +41,6 @@ public class MuleMessage implements Serializable{
 	
 	public void setPassword(String password) {
 		this.password = password;
-	}
-
-	public String getOrganizationIRMS() {
-		return organizationIRMS;
-	}
-	
-	public void setOrganizationIRMS(String organizationIRMS) {
-		this.organizationIRMS = organizationIRMS;
 	}
 
 	public String getMessageData() {

@@ -41,12 +41,17 @@ public class DummyController extends HttpServlet {
 		logger.info(putUserIdToService);
 		String putPasswordToService = request.getParameter("password");
 		logger.info(putPasswordToService);
-		String putOrganizationIRMSToService = request.getParameter("organizationIRMS");
-		logger.info(putOrganizationIRMSToService);
 		String putMessageDataToService = request.getParameter("messageData");
 		logger.info(putMessageDataToService);
 		
-		return dummyService.getMuleResponse(putUserIdToService, putPasswordToService, putOrganizationIRMSToService, putMessageDataToService);
+		return dummyService.getMuleResponse(putUserIdToService, putPasswordToService, putMessageDataToService);
+	}
+	
+	@RequestMapping(value = "/ping", method = RequestMethod.GET)
+	public @ResponseBody String ping() {
+		return "pong";
 	}
 	
 }
+
+
